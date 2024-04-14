@@ -1,0 +1,98 @@
+from enum import auto
+import tkinter as tk
+
+cash = 0
+autonumber = 0
+autoprice = 15
+perclick = 1
+clickerprice = 10
+shopwindow = None
+
+def on_button_click():
+  global cash
+  cash += perclick
+  cashlabel.config(text=f"Cash: {cash}")
+
+def autoclicker():
+  global cash
+  cash += 1
+  cashlabel.config(text=f"cash: {cash}")
+  # Schedule the function to run again after 10 seconds
+  app.after(2000, autoclicker)
+
+def shopopen():  #open the shop window
+  global shopwindow
+  global clickerprice
+  global clickertext
+  global autoclickertext
+  global autoprice
+  if shopwindow is None:
+    shopwindow = tk.Tk()
+    shopwindow.title("Shop")
+    shopwindow.geometry("350x300+375+0")
+    clickertext = tk.Label(shopwindow, text=f"Clicker: {clickerprice}")
+    clickertext.grid(column=1, row=1)
+    clickerbuy = tk.Button(shopwindow, text="Buy", command=buyclicker)
+    clickerbuy.grid(column=1, row=2)
+
+
+    
+    autoclickertext = tk.Label(shopwindow, text=f"Autoclicker: {autoprice}")
+    autoclickertext.grid(column=1, row=3)
+    autoclickerbuy = tk.Button(shopwindow, text="Buy", command=buyautoclicker)
+    autoclickerbuy.grid(column=1, row=4)
+  # Reset shopwindow to None when closing the window
+  else:
+    shopwindow = None
+
+def buyautoclicker():
+  global cash
+  global autonumber
+  global autoprice
+  if cash >= autoprice:
+    cash -= autoprice
+    autonumber += 1
+    autoprice = round(autoprice * 1.2,0)
+    cashlabel.config(text=f"Cash: {cash}")
+    autoclickertext.config(text=f"Autoclicker: {autoprice}")
+    autoclicker()
+    
+def buyclicker():
+  global cash
+  global clickerprice
+  global perclick, shopwindow
+  if cash >= clickerprice:
+    cash = cash - clickerprice
+    clickerprice = round(clickerprice * 1.5 + 5, 0)
+    perclick += 1
+    clickertext.config(text=f"clicker: {clickerprice}")
+    #cashlabel = tk.Label(text=f"Cash: {cash}", width=10, height=3)
+
+    clickertext.grid(column=1, row=1)
+    cashlabel.config(text=f"Cash: {cash}")
+    cashlabel.grid(column=1, row=1)
+  
+
+app = tk.Tk()
+app.title("Clickity click")
+app.geometry("350x300+0+0")
+label = tk.Label(app, text="Hello, Tkinter!")
+
+
+mainbutton = tk.Button(app,
+                       text="click for cash",
+                       command=on_button_click,
+                       width=12,
+                       height=7)
+mainbutton.place(x=200, y=100)
+clickertext = tk.Label(shopwindow, text = f"clicker: {clickerprice}")
+clickertext.config(text = f"clicker: {clickerprice}")
+
+cashlabel = tk.Label(text=f"Cash: {cash}", width=10, height=3)
+cashlabel.grid(column=1, row=1)
+
+shopbutton = tk.Button(app, text="Shop", command=shopopen, width=10, height=3)
+shopbutton.grid(column=3, row=2)
+
+
+app.mainloop()
